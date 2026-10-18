@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Calico Canonical Redirects
  * Description: Preview, test, and enable HTTPS and preferred-domain redirects while preserving paths and tracking queries.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Requires at least: 6.2
  * Requires PHP: 7.4
  * Author: Calico Design
@@ -98,7 +98,7 @@ final class Calico_Canonical_Redirects {
         ?>
         <div class="wrap"><h1>Calico Canonical Redirects</h1>
         <?php settings_errors(); ?>
-        <p>Preferred website: <strong><?php echo esc_html( $home ); ?></strong> (Settings → General → Site Address). HTTPS is required. Both www and non-www preferences are supported.</p>
+        <p>Preferred HTTPS website: <strong><?php echo esc_html( $home ); ?></strong> (Settings → General → Site Address). HTTPS is required. Both www and non-www preferences are supported.</p>
         <p>Start in Preview, test with temporary 302 redirects, then select permanent 301 redirects after checking the results. Preview does not issue redirects from this plugin; hosting and other plugins can still redirect.</p>
         <?php if ( is_multisite() ) { echo '<div class="notice notice-warning inline"><p>Multisite is unsupported; redirects are disabled.</p></div>'; } ?>
         <?php if ( defined( 'CALICO_CANONICAL_REDIRECTS_DISABLED' ) && CALICO_CANONICAL_REDIRECTS_DISABLED ) { echo '<div class="notice notice-warning inline"><p>The emergency disable constant is active.</p></div>'; } ?>

@@ -2,7 +2,7 @@
 Contributors: calico
 Requires at least: 6.2
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,10 @@ PHP 7.4 and 8.3 local tests use simulated WordPress boundaries; no full WordPres
 version compatibility certification is claimed by this initial package.
 
 == Changelog ==
+= 1.1.1 =
+Clarifies the settings-page label to "Preferred HTTPS website". Redirect behavior
+and saved settings are unchanged.
+
 = 1.1.0 =
 Public GitHub update support with version-pinned assets, GPL license text,
 stable ZIP filename and public documentation. Redirect behavior unchanged.
