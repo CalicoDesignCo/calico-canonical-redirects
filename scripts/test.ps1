@@ -9,5 +9,7 @@ Get-ChildItem -LiteralPath $projectRoot -Recurse -Filter *.php | ForEach-Object 
 if ($LASTEXITCODE -ne 0) { throw 'Policy tests failed' }
 & $Php (Join-Path $projectRoot 'tests\adapter.php')
 if ($LASTEXITCODE -ne 0) { throw 'Adapter tests failed' }
+& $Php (Join-Path $projectRoot 'tests\updater.php')
+if ($LASTEXITCODE -ne 0) { throw 'Updater tests failed' }
 & node (Join-Path $projectRoot 'tests\http-tests.cjs') $Php
 if ($LASTEXITCODE -ne 0) { throw 'HTTP tests failed' }

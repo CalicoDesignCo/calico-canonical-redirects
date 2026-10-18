@@ -5,7 +5,10 @@ $projectRoot = Split-Path $PSScriptRoot -Parent
 $sourceRoot = Join-Path $projectRoot 'source\calico-canonical-redirects'
 $releaseRoot = Join-Path $projectRoot 'releases'
 $null = New-Item -ItemType Directory -Force -Path $releaseRoot
-$packagePath = Join-Path $releaseRoot 'calico-canonical-redirects-1.0.0.zip'
+$pluginText = Get-Content -LiteralPath (Join-Path $sourceRoot 'calico-canonical-redirects.php') -Raw
+if ($pluginText -notmatch 'Version:\s*(\d+\.\d+\.\d+)') { throw 'Plugin version missing' }
+$releaseVersion = $Matches[1]
+$packagePath = Join-Path $releaseRoot "calico-canonical-redirects-$releaseVersion.zip"
 if (Test-Path -LiteralPath $packagePath) { throw 'Package exists. Preserve the existing release; increment version before building another.' }
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive = [System.IO.Compression.ZipFile]::Open($packagePath, 'Create')
@@ -27,3 +30,4 @@ try {
     }
 } finally { $archive.Dispose() }
 Get-FileHash -LiteralPath $packagePath -Algorithm SHA256 | Format-List
+Copy-Item -LiteralPath $packagePath -Destination (Join-Path $releaseRoot 'calico-canonical-redirects.zip')
