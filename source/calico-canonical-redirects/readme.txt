@@ -2,8 +2,9 @@
 Contributors: calico
 Requires at least: 6.2
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Preview, test, and enable front-end HTTPS and preferred-domain redirects.
 
@@ -15,7 +16,8 @@ requests on that domain and its www alternate. Starts in Preview mode.
 Modes: Preview (no plugin redirects), Test (302), Live (301).
 Trusted proxy IPs must be explicitly configured when HTTPS terminates upstream.
 This plugin does not change .htaccess, WordPress URLs, canonicals, or page content.
-No analytics, remote services, request logging, or automatic network checks.
+No analytics or request logging. WordPress checks the public GitHub repository
+for stable plugin releases. No GitHub account token is required.
 
 == Installation ==
 1. Upload the ZIP through Plugins > Add New > Upload Plugin and activate.
@@ -30,6 +32,13 @@ Set Preview, deactivate, or define CALICO_CANONICAL_REDIRECTS_DISABLED as true
 in wp-config.php before WordPress loads. Cached permanent redirects may persist.
 Deleting the plugin leaves its small settings option for reinstalls.
 
+== Updates and privacy ==
+WordPress periodically requests public release metadata from api.github.com.
+When an administrator starts an update, it downloads that version's installable
+ZIP from GitHub. The updater sends no page content or visitor data and does not
+enable automatic updates. WordPress administrators control that preference.
+For 1.0.0 installations, manually install 1.1.0 once to add the updater.
+
 == Limitations ==
 Single-site only. Public DNS domains and standard ports only. Exact proxy IPs,
 not CIDR ranges or multi-hop forwarded headers. Use Cloudflare Full (strict).
@@ -41,5 +50,9 @@ PHP 7.4 and 8.3 local tests use simulated WordPress boundaries; no full WordPres
 version compatibility certification is claimed by this initial package.
 
 == Changelog ==
+= 1.1.0 =
+Public GitHub update support with version-pinned assets, GPL license text,
+stable ZIP filename and public documentation. Redirect behavior unchanged.
+
 = 1.0.0 =
 Initial preview, 302/301 modes, simulator, proxy trust and emergency disable.

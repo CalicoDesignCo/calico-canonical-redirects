@@ -2,15 +2,21 @@
 /**
  * Plugin Name: Calico Canonical Redirects
  * Description: Preview, test, and enable HTTPS and preferred-domain redirects while preserving paths and tracking queries.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Requires at least: 6.2
  * Requires PHP: 7.4
- * Author: Calico
+ * Author: Calico Design
+ * Author URI: https://calicodesign.co/
+ * Plugin URI: https://github.com/CalicoDesignCo/calico-canonical-redirects
+ * Update URI: https://github.com/CalicoDesignCo/calico-canonical-redirects
  * License: GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: calico-canonical-redirects
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once __DIR__ . '/includes/class-ccr-policy.php';
+require_once __DIR__ . '/includes/class-ccr-updater.php';
+CCR_Updater::register( __FILE__ );
 
 final class Calico_Canonical_Redirects {
     const OPTION = 'calico_canonical_redirects';
