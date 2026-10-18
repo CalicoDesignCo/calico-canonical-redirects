@@ -1,6 +1,7 @@
 <?php
 // Test-only WordPress boundary; never packaged or installed.
 define( 'ABSPATH', __DIR__ . '/' );
+function plugin_basename( $file ) { return 'calico-canonical-redirects/' . basename( $file ); }
 $GLOBALS['hooks'] = array();
 $GLOBALS['errors'] = array();
 $GLOBALS['settings'] = array( 'mode' => 'preview', 'tls' => true, 'proxies' => '' );
