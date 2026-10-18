@@ -1,46 +1,64 @@
-# Calico Canonical Redirects 1.0.0
+# Calico Canonical Redirects
 
-Source: `source/calico-canonical-redirects`. Installable package: `releases/calico-canonical-redirects-1.0.0.zip`.
-New reusable WordPress plugin; no live website has been changed by this build.
+Preview, test and enable HTTPS and preferred-domain redirects on a WordPress website. Supports www or non-www as configured in Settings > General > Site Address, preserving paths and accepted tracking query strings.
 
-## Website test procedure
+**Version 1.1.0** | WordPress 6.2+ | PHP 7.4+ | GPL-2.0-or-later
 
-1. Install the ZIP and activate. Open **Settings → Canonical Redirects**. The default is **Preview**. The four-row simulator proposes redirects without issuing them.
-2. Verify **Settings → General → Site Address** is the desired HTTPS domain. The plugin follows www or non-www exactly as configured. It does not change that setting.
-3. Check HTTPS works without certificate warnings for both hostnames. If using a TLS proxy, get its exact immediate peer IPs from your host and confirm it overwrites `X-Forwarded-Proto`. Enter those IPs. Do not guess or copy an observed peer IP into the trust list without confirming its role. CIDRs are unsupported. Cloudflare requires Full (strict) TLS; native host HTTPS is simpler.
-4. Check the certificate confirmation box, select **Test — temporary 302**, and save. Purge the host/CDN/page cache. Test a known real page on all four domain/scheme versions in a private browser. Confirm the preferred HTTPS URL remains stable, paths and tracking survive, and no loops occur. This mode does issue redirects to visitors until switched back.
-5. Optional command from this project folder:
+[Download the free plugin](https://github.com/CalicoDesignCo/calico-canonical-redirects/releases/latest/download/calico-canonical-redirects.zip) | [Releases](https://github.com/CalicoDesignCo/calico-canonical-redirects/releases)
 
-   ```powershell
-   node scripts/check-site.cjs https://rosebuddeerfield.com /menu/ test
-   ```
+## Install and test
 
-   This makes read-only public GET requests, verifies certificates, follows up to five redirects, reports redirect owners when provided, and checks the final URL/query and page status. Run before installing to capture a baseline, then repeat in Test mode. A host/CDN redirect can run first; a PASS verifies convergence, not attribution to this plugin. First-hop status differences are reported as notes.
-6. When satisfied, switch to **Live — permanent 301**. Clear caches and repeat with `live` as the final command argument. Browser-cached 301s can persist after deactivation, which is why Test mode comes first.
+1. Download the installable ZIP, then use **WordPress > Plugins > Add Plugin > Upload Plugin > Install > Activate**.
+2. Open **Settings > Canonical Redirects**. Default **Preview** displays a simulator without issuing redirects from this plugin.
+3. Confirm the Site Address is the desired HTTPS domain. Verify certificates cover both www and non-www. If TLS terminates at a proxy, obtain its exact immediate connection IPs from the host and confirm it overwrites `X-Forwarded-Proto`. Do not guess trusted IPs. Use Cloudflare Full (strict).
+4. Confirm the certificate/setup check, select **Test - temporary 302**, save and clear site/CDN caches. Check all four HTTP/HTTPS and host variants on a real page. Test mode affects visitors until changed.
+5. After verifying the preferred HTTPS URL, path and query, select **Live - permanent 301** and retest. Browsers may retain permanent redirects after deactivation.
 
-## Recovery
+Optional read-only public response checker (Node.js):
 
-Set Preview or deactivate through wp-admin. The plugin never redirects admin/login requests. If needed, add this to wp-config.php before WordPress loads:
+```sh
+node scripts/check-site.cjs https://example.com /menu/ test
+```
+
+Use `live` for the final check. This makes public GET requests, validates HTTPS certificates, detects loops and checks final URLs. Other host/CDN/WordPress redirects may run first; successful convergence alone does not identify the redirect owner.
+
+## Updates and external requests
+
+Version 1.1.0 adds WordPress update checks for stable releases in this public GitHub repository. WordPress periodically requests metadata from `api.github.com`; when an administrator starts an update, it downloads the matching version's installable ZIP from GitHub. The updater sends no page content or visitor information and needs no account token. It does not enable automatic updates; WordPress administrators control that preference.
+
+Use **Dashboard > Updates > Check again** to refresh. Sites using 1.0.0 must manually install 1.1.0 once to add the updater. Subsequent compatible releases can use the normal WordPress update flow.
+
+## Recovery and limits
+
+Set Preview, deactivate, or add this before WordPress loads in `wp-config.php`:
 
 ```php
 define('CALICO_CANONICAL_REDIRECTS_DISABLED', true);
 ```
 
-Remove it to enable the plugin again. Purge server/CDN caches. Other plugins and server rules remain independently active.
+Clear host/CDN caches; browser-cached 301s and other rules may persist.
 
-## Developer verification
+Single-site public domains and standard ports only. Handles front-end GET/HEAD that reach WordPress; login/admin, REST, AJAX, cron, XML-RPC, CLI, previews, POST submissions and server-served static files are outside scope. Proxy trust accepts exact IPs, not CIDR ranges or forwarded lists. Does not edit server rules, site URLs, content or SEO tags, repair certificates, or resolve unrelated Search Console issues.
+
+## Development
+
+Production source: `source/calico-canonical-redirects`. Tests and scripts stay outside the installable package. GitHub's autogenerated source ZIP is not the installable release asset.
 
 ```powershell
-.\scripts\test.ps1 -Php 'C:\path\to\php.exe'
-.\scripts\build.ps1 -Php 'C:\path\to\php.exe'
+./scripts/test.ps1 -Php php
+./scripts/build.ps1 -Php php
 ```
 
-Requires Node and PHP 7.4+. Build runs lint and the policy, adapter and real HTTP tests first, packages production files only, and verifies each ZIP entry against tested source. It refuses to overwrite an existing release. HTTP tests bind an ephemeral loopback port and stop the PHP server afterward. WordPress function boundaries are simulated: these tests are not a full WordPress installation, real TLS proxy, browser, cache, theme, or plugin compatibility test.
+Requires PHP and Node.js. Build derives the version from the PHP header, runs checks, creates a preserved versioned archive and stable `calico-canonical-redirects.zip`, and verifies package files against source. See [TEST-RESULTS.md](TEST-RESULTS.md). Upload reviewed changes directly to GitHub, tag the final verified commit, and attach the tested ZIP to the GitHub Release.
 
-71 assertions per PHP runtime: 42 policy, 16 adapter, 13 HTTP. See `TEST-RESULTS.md` for the build verification record.
+## Changelog
 
-## Scope
+### 1.1.0
 
-Front-end GET/HEAD requests only. No rewrite-file edits, site URL changes, page content changes, SEO canonical-tag changes, request history, or remote calls. Query strings remain byte-for-byte intact for accepted requests. Unsafe/ambiguous requests are skipped. Login/admin/API/form submissions and static files are excluded; use hosting rules for all-resource enforcement. Multisite, IP-based sites, custom ports and proxy CIDRs are not supported. Trusted proxy HTTPS is normalized early so WordPress sees the same scheme when redirect mode is active. This does not replace a host's complete proxy setup.
+- Adds public GitHub update integration using version-specific release assets.
+- Adds full GPL license text, stable download packaging and public documentation.
+- Retains v1.0.0 redirect behavior and saved settings.
 
-WordPress APIs: [template_redirect](https://developer.wordpress.org/reference/hooks/template_redirect/), [wp_safe_redirect](https://developer.wordpress.org/reference/functions/wp_safe_redirect/), [HTTPS behind proxies](https://developer.wordpress.org/reference/functions/is_ssl/).
+### 1.0.0
+
+- Initial Preview, temporary 302 and permanent 301 modes, simulator, proxy trust and emergency disable.
