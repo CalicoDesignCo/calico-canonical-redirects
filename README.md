@@ -2,7 +2,7 @@
 
 Preview, test and enable HTTPS and preferred-domain redirects on a WordPress website. Supports www or non-www as configured in Settings > General > Site Address, preserving paths and accepted tracking query strings.
 
-**Version 1.1.0** | WordPress 6.2+ | PHP 7.4+ | GPL-2.0-or-later
+**Version 1.1.1** | WordPress 6.2+ | PHP 7.4+ | GPL-2.0-or-later
 
 [Download the free plugin](https://github.com/CalicoDesignCo/calico-canonical-redirects/releases/latest/download/calico-canonical-redirects.zip) | [Releases](https://github.com/CalicoDesignCo/calico-canonical-redirects/releases)
 
@@ -52,6 +52,11 @@ Production source: `source/calico-canonical-redirects`. Tests and scripts stay o
 Requires PHP and Node.js. Build derives the version from the PHP header, runs checks, creates a preserved versioned archive and stable `calico-canonical-redirects.zip`, and verifies package files against source. See [TEST-RESULTS.md](TEST-RESULTS.md). Upload reviewed changes directly to GitHub, tag the final verified commit, and attach the tested ZIP to the GitHub Release.
 
 ## Changelog
+
+### 1.1.1
+
+- Clarifies the settings-page label to "Preferred HTTPS website".
+- Redirect behavior and saved settings are unchanged.
 
 ### 1.1.0
 
