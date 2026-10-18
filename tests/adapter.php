@@ -1,0 +1,33 @@
+<?php
+require __DIR__ . '/wp-stubs.php';
+$count = 0;
+function check( $ok, $label ) { global $count; ++$count; if ( ! $ok ) { fwrite( STDERR, "FAIL: $label\n" ); exit( 1 ); } echo "PASS: $label\n"; }
+check( isset( $GLOBALS['hooks']['template_redirect'] ), 'Front-end redirect hook registered' );
+check( ! Calico_Canonical_Redirects::active( array( 'mode' => 'preview', 'tls' => true ) ), 'Default Preview inactive' );
+check( ! Calico_Canonical_Redirects::active( array( 'mode' => 'live', 'tls' => false ) ), 'Certificate confirmation required' );
+check( Calico_Canonical_Redirects::sanitize( array( 'mode' => 'live', 'tls' => '1' ) )['mode'] === 'live', 'Valid live setting accepted' );
+check( Calico_Canonical_Redirects::sanitize( array( 'mode' => 'test' ) )['mode'] === 'preview', 'Unconfirmed mode falls back to Preview' );
+check( Calico_Canonical_Redirects::sanitize( array( 'mode' => 'bogus', 'tls' => '1' ) )['mode'] === 'preview', 'Unknown mode fails closed' );
+check( Calico_Canonical_Redirects::sanitize( array( 'mode' => 'live', 'tls' => '1', 'proxies' => '192.0.2.0/24' ) )['mode'] === 'preview', 'Invalid proxy prevents enablement' );
+$settings = Calico_Canonical_Redirects::sanitize( array( 'mode' => 'test', 'tls' => '1', 'proxies' => "192.0.2.1,2001:db8::1\n192.0.2.1" ) );
+check( $settings['proxies'] === "192.0.2.1\n2001:db8::1", 'Proxy input validated and deduplicated' );
+$GLOBALS['multisite'] = true;
+check( ! Calico_Canonical_Redirects::active( array( 'mode' => 'live', 'tls' => true ) ), 'Multisite runtime disabled' );
+check( Calico_Canonical_Redirects::sanitize( array( 'mode' => 'live', 'tls' => '1' ) )['mode'] === 'preview', 'Multisite setting disabled' );
+$GLOBALS['multisite'] = false;
+$GLOBALS['home'] = 'http://example.com';
+check( Calico_Canonical_Redirects::sanitize( array( 'mode' => 'live', 'tls' => '1' ) )['mode'] === 'preview', 'Insecure home prevents enablement' );
+$GLOBALS['home'] = 'https://example.com';
+$GLOBALS['settings'] = array( 'mode' => 'test', 'tls' => true, 'proxies' => '192.0.2.1' );
+$_SERVER = array( 'REMOTE_ADDR' => '192.0.2.1', 'HTTP_X_FORWARDED_PROTO' => 'https' );
+Calico_Canonical_Redirects::proxy_scheme();
+check( $_SERVER['HTTPS'] === 'on', 'Trusted proxy normalized for WordPress canonical logic' );
+ob_start(); Calico_Canonical_Redirects::page(); $html = ob_get_clean();
+check( strpos( $html, 'Redirect simulator' ) !== false && substr_count( $html, '<tr><td><code>' ) === 4, 'Admin simulator renders four variants' );
+check( strpos( $html, '_wpnonce' ) !== false, 'Settings form includes nonce boundary' );
+$GLOBALS['can_manage'] = false;
+ob_start(); Calico_Canonical_Redirects::page(); $html = ob_get_clean();
+check( '' === $html, 'Unprivileged user cannot render settings' );
+define( 'CALICO_CANONICAL_REDIRECTS_DISABLED', true );
+check( ! Calico_Canonical_Redirects::active( $GLOBALS['settings'] ), 'Emergency constant disables runtime' );
+echo "Adapter: $count checks passed.\n";
