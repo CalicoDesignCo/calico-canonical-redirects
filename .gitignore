@@ -1,0 +1,10 @@
+# Machine-specific verification output stays local.
+/tests/*-results.txt
+/tests/*-build-results.txt
+/tests/deerfield-before-install.txt
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*
+/node_modules/
